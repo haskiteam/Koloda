@@ -522,14 +522,19 @@ public class KolodaView: UIView, DraggableCardDelegate {
     }
     
     private func reconfigureCards() {
-        for index in 0..<visibleCards.count {
+        for var index = visibleCards.count - 1; index >= 0; index-- {
             if let dataSource = self.dataSource {
-                
-                let currentCardContentView = dataSource.koloda(self, viewForCardAtIndex: UInt(currentCardNumber + index))
-                let overlayView = dataSource.koloda(self, viewForCardOverlayAtIndex: UInt(currentCardNumber + index))
+                let numberOfCards = dataSource.koloda(kolodaNumberOfCards: self)
                 let currentCard = visibleCards[index]
-                
-                currentCard.configure(currentCardContentView, overlayView: overlayView)
+                let i = UInt(currentCardNumber + index)
+                if (i < numberOfCards) {
+                    let currentCardContentView = dataSource.koloda(self, viewForCardAtIndex: i)
+                    let overlayView = dataSource.koloda(self, viewForCardOverlayAtIndex: i)
+                    currentCard.configure(currentCardContentView, overlayView: overlayView)
+                } else {
+                    currentCard.removeFromSuperview()
+                    visibleCards.removeLast()
+                }
             }
         }
     }
